@@ -38,6 +38,7 @@ class Rocket1(pygame.sprite.Sprite):
         self.pos = x, y
         self.rect = self.image.get_rect().move(speed_player1 + x, y)
 
+
 class Rocket2(pygame.sprite.Sprite):
     image = load_image('rocket2.png')
 
@@ -53,6 +54,7 @@ class Rocket2(pygame.sprite.Sprite):
     def move(self, x, y):
         self.pos = x, y
         self.rect = self.image.get_rect().move(speed_player2 + x + 15, y)
+
 
 class Ball(pygame.sprite.Sprite):
     image = load_image("ball.png")
@@ -144,14 +146,14 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             Ball(width // 2, height // 2)
         if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    m_left_s = True
-                if event.key == pygame.K_RIGHT:
-                    m_right_s = True
-                if event.key == pygame.K_a:
-                    m_left_a = True
-                if event.key == pygame.K_d:
-                    m_right_d = True
+            if event.key == pygame.K_LEFT:
+                m_left_s = True
+            if event.key == pygame.K_RIGHT:
+                m_right_s = True
+            if event.key == pygame.K_a:
+                m_left_a = True
+            if event.key == pygame.K_d:
+                m_right_d = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 m_left_s = False
