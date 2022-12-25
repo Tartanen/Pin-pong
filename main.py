@@ -1,19 +1,17 @@
-import pygame
 import os
-import sys
 import random
-from data import speed_ball, speed_player1, speed_player2, max_speed_player1, max_speed_player2
+import sys
 
-radius = 50
-fps = 50
-width = 400
-height = 550
+import pygame
+
+from data import max_speed_ball, min_speed_ball
+
+fps = 60
+width = 640
+height = 1024
 
 screen = pygame.display.set_mode((width, height))
-clock = pygame.time.Clock()
-pygame.display.set_caption('Пин-понг')
 
-player = None
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
@@ -38,23 +36,25 @@ def load_image(name, colorkey=None):
 class Rocket1(pygame.sprite.Sprite):
     image = load_image('rocket1.png')
 
-    def __init__(self):
+    def __init__(self, pos_x, pos_y):
         super().__init__(all_sprites)
         self.image = Rocket1.image
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect().move(pos_x, pos_y)
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.bottom = height
+        self.pos = pos_x, pos_y
 
 
 class Rocket2(pygame.sprite.Sprite):
     image = load_image('rocket2.png')
 
-    def __init__(self):
+    def __init__(self, pos_x, pos_y):
         super().__init__(all_sprites)
         self.image = Rocket2.image
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.bottom = height
+        self.rect.x = pos_x
+        self.rect.y = pos_y
+        self.pos = pos_x, pos_y
 
 
 class Ball(pygame.sprite.Sprite):
@@ -65,8 +65,9 @@ class Ball(pygame.sprite.Sprite):
         self.image = Ball.image
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.vx = random.randint(-(speed_ball), speed_ball)
-        self.vy = random.randrange(-(speed_ball), speed_ball)
+        temp = [1, -1, 0]
+        self.vx = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp)
+        self.vy = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp[0:1])
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
@@ -89,6 +90,35 @@ class Border(pygame.sprite.Sprite):
             self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
 
 
+class Backgraund(pygame.sprite.Sprite):
+    image = load_image("space-bck.png")
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = Backgraund.image
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.bottom = height
+
+
+def move(obj, rule):
+    x, y = obj.pos
+    if rule == 'left_d' and x > 0:
+        obj.move(x + 1, y)
+    if rule == 'left_a' and x < width:
+        obj.move(x - 1, y)
+    if rule == 'left_s' and x > 0:
+        obj.move(x - 1, y)
+    if rule == 'right_s' and x < width:
+        obj.move(x + 1, y)
+
+
+clock = pygame.time.Clock()
+pygame.display.set_caption('Пин-понг')
+
+icon = load_image('icon.png')
+pygame.display.set_icon(icon)
+
 pygame.init()
 
 Border(5, 5, 5, height - 5)
@@ -97,9 +127,10 @@ Border(width - 5, 5, width - 5, height - 5)
 pygame.mixer.music.load("sound/fon.mp3")
 hit = pygame.mixer.Sound("sound/hit.mp3")
 
-Player1 = Rocket1()
-Player2 = Rocket2()
-screen.fill('black')
+player1 = Rocket1(height // 2, 20)
+player2 = Rocket2(height // 2, width - 20)
+
+backgraund = Backgraund()
 
 clock = pygame.time.Clock()
 running = True
@@ -112,7 +143,15 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             Ball(event.pos)
-    screen.fill('black')
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                move(player1, 'left')
+            if event.key == pygame.K_RIGHT:
+                move(player1, 'right')
+            if event.key == pygame.K_a:
+                move(player2, 'left')
+            if event.key == pygame.K_d:
+                move(player2, 'right')
     all_sprites.draw(screen)
     all_sprites.update()
     pygame.display.flip()
