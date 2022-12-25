@@ -2,36 +2,7 @@ import pygame
 import os
 import sys
 import random
-import csv
-
-speed_ball = 0
-max_speed_player1 = 0
-speed_player1 = 0
-max_speed_player2 = 0
-speed_player2 = 0
-
-with open('physics/ball.cvt', encoding="utf8") as f:
-    reader = csv.reader(f, delimiter='=')
-    for index, row in enumerate(reader):
-        if row[0] == 'max_speed':
-            speed_ball = int(row[-1])
-
-with open('physics/Player_1.cvt', encoding="utf8") as f:
-    reader = csv.reader(f, delimiter='=')
-    for index, row in enumerate(reader):
-        if row[0] == 'max_speed':
-            max_speed_player1 = int(row[-1])
-        if row[0] == 'speed':
-            speed_player1 = int(row[-1])
-
-with open('physics/Player_2.cvt', encoding="utf8") as f:
-    reader = csv.reader(f, delimiter='=')
-    for index, row in enumerate(reader):
-        if row[0] == 'max_speed':
-            max_speed_player2 = int(row[-1])
-        if row[0] == 'speed':
-            speed_player2 = int(row[-1])
-
+from data import speed_ball, speed_player1, speed_player2, max_speed_player1, max_speed_player2
 
 radius = 50
 fps = 50
@@ -66,6 +37,7 @@ def load_image(name, colorkey=None):
 
 class Rocket1(pygame.sprite.Sprite):
     image = load_image('rocket1.png')
+
     def __init__(self):
         super().__init__(all_sprites)
         self.image = Rocket1.image
@@ -76,6 +48,7 @@ class Rocket1(pygame.sprite.Sprite):
 
 class Rocket2(pygame.sprite.Sprite):
     image = load_image('rocket2.png')
+
     def __init__(self):
         super().__init__(all_sprites)
         self.image = Rocket2.image
@@ -86,6 +59,7 @@ class Rocket2(pygame.sprite.Sprite):
 
 class Ball(pygame.sprite.Sprite):
     image = load_image("ball.png")
+
     def __init__(self, pos):
         super().__init__(all_sprites)
         self.image = Ball.image
@@ -115,7 +89,6 @@ class Border(pygame.sprite.Sprite):
             self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
 
 
-
 pygame.init()
 
 Border(5, 5, 5, height - 5)
@@ -127,7 +100,6 @@ hit = pygame.mixer.Sound("sound/hit.mp3")
 Player1 = Rocket1()
 Player2 = Rocket2()
 screen.fill('black')
-
 
 clock = pygame.time.Clock()
 running = True
