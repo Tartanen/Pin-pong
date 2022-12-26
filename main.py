@@ -23,6 +23,30 @@ pygame.display.set_caption('Пин-понг')
 icon = load_image('icon.png')
 pygame.display.set_icon(icon)
 
+start = False
+
+
+def move(obj, rule, rep):
+    x, y = obj.pos
+    if rule == 'right_d' and x + obj.image.get_rect().size[0] < width - 5:
+        for i in range(rep):
+            obj.move(x + speed_player2, y)
+    if rule == 'left_a' and x > 5:
+        for i in range(rep):
+            obj.move(x - speed_player2, y)
+    if rule == 'left_s' and x > 5:
+        for i in range(rep):
+            obj.move(x - speed_player1, y)
+    if rule == 'right_s' and x + obj.image.get_rect().size[0] < width - 5:
+        for i in range(rep):
+            obj.move(x + speed_player1, y)
+    if rule == 'up' and y - obj.image.get_rect().size[1] < 30:
+        for i in range(rep):
+            obj.move(x, y - speed_player1)
+    if rule == 'down' and y + obj.image.get_rect().size[1] < width - 20:
+        for i in range(rep):
+            obj.move(x, y + speed_player1)
+
 
 class Rocket1(pygame.sprite.Sprite):
     image = load_image('rocket1.png')
@@ -31,14 +55,14 @@ class Rocket1(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         self.image = Rocket1.image
         pos_x = width / 2 - self.image.get_rect().size[0] / 2
-        pos_y = height - self.image.get_rect().size[-1] * 2
+        pos_y = height - self.image.get_rect().size[-1] - 20
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.pos = pos_x, pos_y
 
     def move(self, x, y):
         self.pos = x, y
-        self.rect = self.image.get_rect().move(speed_player1 + x, y)
+        self.rect = self.image.get_rect().move(x, y)
 
 
 class Rocket2(pygame.sprite.Sprite):
@@ -48,14 +72,14 @@ class Rocket2(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         self.image = Rocket2.image
         pos_x = width / 2 - self.image.get_rect().size[0] / 2
-        pos_y = 30
+        pos_y = 5
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.pos = pos_x, pos_y
 
     def move(self, x, y):
         self.pos = x, y
-        self.rect = self.image.get_rect().move(speed_player1 + x, y)
+        self.rect = self.image.get_rect().move(x, y)
 
 
 class Ball(pygame.sprite.Sprite):
@@ -115,44 +139,6 @@ class Backgraund(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 
-class Menu(pygame.sprite.Sprite):
-    menu = load_image("menu.png")
-    start = load_image("play.png")
-    exit = load_image("cancel.png")
-    option = load_image("options.png")
-
-    def __init__(self):
-        super().__init__(menu_sprites)
-        self.menu = Menu.menu
-        self.start = Menu.start
-        self.exit = Menu.exit
-        self.option = Menu.option
-        self.rect_m = self.menu.get_rect()
-        self.rect_m.x = random.randrange(width)
-        self.rect_m.y = random.randrange(height)
-        self.rect_s = self.start.get_rect()
-        self.rect_s.x = random.randrange(width)
-        self.rect_s.y = random.randrange(height)
-        self.rect_e = self.exit.get_rect()
-        self.rect_e.x = random.randrange(width)
-        self.rect_e.y = random.randrange(height)
-        self.rect_o = self.option.get_rect()
-        self.rect_o.x = random.randrange(width)
-        self.rect_o.y = random.randrange(height)
-
-
-def move(obj, rule):
-    x, y = obj.pos
-    if rule == 'right_d' and x + obj.image.get_rect().size[0] < width - 30:
-        obj.move(x + speed_player2, y)
-    if rule == 'left_a' and x > 5:
-        obj.move(x - speed_player2, y)
-    if rule == 'left_s' and x > 5:
-        obj.move(x - speed_player1, y)
-    if rule == 'right_s' and x + obj.image.get_rect().size[0] < width - 30:
-        obj.move(x + speed_player1, y)
-
-
 pygame.init()
 
 m_left_s = False
@@ -169,19 +155,18 @@ pygame.mixer.music.load("sound/fon.mp3")
 hit = pygame.mixer.Sound("sound/hit.mp3")
 loss = pygame.mixer.Sound("sound/loss.mp3")
 
-Menu()
-Backgraund()
-
-player1 = Rocket1()
-player2 = Rocket2()
-
 clock = pygame.time.Clock()
 
 pygame.mixer.music.play(-1)
 
 running = True
-move(player1, 'left_s')
-move(player2, 'right_d')
+
+Backgraund()
+player1 = Rocket1()
+player2 = Rocket2()
+
+move(player1, 'left_s', 1)
+move(player2, 'left_s', 1)
 
 while running:
     for event in pygame.event.get():
@@ -208,17 +193,16 @@ while running:
             if event.key == pygame.K_d:
                 m_right_d = False
     if m_left_s:
-        move(player1, 'left_s')
-    elif m_right_s:
-        move(player1, 'right_s')
+        move(player1, 'left_s', 1)
+    if m_right_s:
+        move(player1, 'right_s', 1)
     if m_left_a:
-        move(player2, 'left_a')
-    elif m_right_d:
-        move(player2, 'right_d')
+        move(player2, 'left_a', 1)
+    if m_right_d:
+        move(player2, 'right_d', 1)
+
     back_sprites.draw(screen)
     back_sprites.update()
-    #menu_sprites.draw(screen)
-    #menu_sprites.update()
     all_sprites.draw(screen)
     all_sprites.update()
     pygame.display.flip()
