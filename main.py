@@ -2,8 +2,9 @@ import random
 
 import pygame
 
-from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2, max_speed_player1, max_speed_player2
+from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2
 from load_image import load_image
+from load_sound import load_sound
 
 fps = 60
 width = 640
@@ -151,13 +152,14 @@ Border(5, height - 5, width - 5, height - 5)
 Border(5, 5, 5, height - 5)
 Border(width - 5, 5, width - 5, height - 5)
 
-pygame.mixer.music.load("sound/fon.mp3")
-hit = pygame.mixer.Sound("sound/hit.mp3")
-loss = pygame.mixer.Sound("sound/loss.mp3")
+pygame.mixer.music.load("data/sound/fon.mp3")
+hit = load_sound("hit.mp3")
+loss = load_sound("loss.mp3")
 
 clock = pygame.time.Clock()
 
 pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.3)
 
 running = True
 

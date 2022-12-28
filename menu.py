@@ -1,14 +1,14 @@
+import sys
+import os
+import pygame
+from main im
 def menu():
-    '''display main menu'''
-    pygame.mixer.music.load(path.join(sound_dir, 'SpaceShooter_Theme.wav'))
-    pygame.mixer.music.play(-1)
 
     title = pygame.image.load(path.join(img_dir, "The_Lonely_Shooter.png")).convert_alpha()
     title = pygame.transform.scale(title, (WINDOWWIDTH, 81 * 2))
     background = pygame.image.load('images/stars_bg.jpeg').convert()
     background_rect = background.get_rect()
 
-    # display instructions for game
     arrow_keys = pygame.image.load(path.join(img_dir, 'arrowkeys.png')).convert_alpha()
     arrow_keys = pygame.transform.scale(arrow_keys, (150, 85))
     spacebar = pygame.image.load(path.join(img_dir, 'spacebar.png')).convert_alpha()
