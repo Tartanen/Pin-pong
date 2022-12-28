@@ -50,7 +50,7 @@ def move(obj, rule, rep):
 
 
 class Rocket1(pygame.sprite.Sprite):
-    image = load_image('rocket1.png')
+    image = load_image('rocket11.png')
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -67,7 +67,7 @@ class Rocket1(pygame.sprite.Sprite):
 
 
 class Rocket2(pygame.sprite.Sprite):
-    image = load_image('rocket2.png')
+    image = load_image('rocket22.png')
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -132,7 +132,7 @@ class Border(pygame.sprite.Sprite):
 
 
 class Backgraund(pygame.sprite.Sprite):
-    im = load_image("space-bck.png")
+    im = load_image("space-bck1.png")
 
     def __init__(self):
         super().__init__(back_sprites)
