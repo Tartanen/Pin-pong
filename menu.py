@@ -1,44 +1,99 @@
-import sys
-import os
 import pygame
-from main im
-def menu():
+import sys
 
-    title = pygame.image.load(path.join(img_dir, "The_Lonely_Shooter.png")).convert_alpha()
-    title = pygame.transform.scale(title, (WINDOWWIDTH, 81 * 2))
-    background = pygame.image.load('images/stars_bg.jpeg').convert()
-    background_rect = background.get_rect()
+from load_image import load_image
 
-    arrow_keys = pygame.image.load(path.join(img_dir, 'arrowkeys.png')).convert_alpha()
-    arrow_keys = pygame.transform.scale(arrow_keys, (150, 85))
-    spacebar = pygame.image.load(path.join(img_dir, 'spacebar.png')).convert_alpha()
-    spacebar = pygame.transform.scale(spacebar, (150, 50))
 
-    DISPLAYSURF.blit(background, background_rect)
-    DISPLAYSURF.blit(title, (0, 20))
-    DISPLAYSURF.blit(arrow_keys, (225, 400))
-    DISPLAYSURF.blit(spacebar, (225, 500))
-    pygame.draw.rect(DISPLAYSURF, GREENYELLOW, (80, 294, 321, 35))
-    pygame.draw.rect(DISPLAYSURF, GREENYELLOW, (120, 345, 240, 35))
-    draw_text(DISPLAYSURF, "PRESS [ENTER] TO BEGIN", 35, WINDOWWIDTH / 2, WINDOWHEIGHT / 2, DARKGREY)
-    draw_text(DISPLAYSURF, "PRESS [Q] TO QUIT", 35, WINDOWWIDTH / 2, (WINDOWHEIGHT / 2) + 50, DARKGREY)
+fps = 60
+width = 640
+height = 1024
 
-    # game instructions
-    pygame.draw.rect(DISPLAYSURF, GREENYELLOW, (50, 430, 100, 35))
-    pygame.draw.rect(DISPLAYSURF, GREENYELLOW, (50, 510, 100, 35))
-    draw_text(DISPLAYSURF, "MOVE:", 35, 100, 436, DARKGREY)
-    draw_text(DISPLAYSURF, "SHOOT:", 35, 101, 516, DARKGREY)
+screen = pygame.display.set_mode((width, height))
 
-    pygame.display.update()
+width = screen.get_width()
+height = screen.get_height()
 
-    while True:
-        event = pygame.event.poll()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                break
-            elif event.key == pygame.K_q:
-                pygame.quit()
-                sys.exit()
-        elif event.type == QUIT:
-            pygame.quit()
-            sys.exit() 
+all_sprites = pygame.sprite.Group()
+menu_sprites = pygame.sprite.Group()
+back_sprites = pygame.sprite.Group()
+class Menu(pygame.sprite.Sprite):
+    image = load_image('menu.png')
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = Menu.image
+        self.rect = self.image.get_rect()
+        self.rect.center = (width / 2, height // 5)
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+class Start(pygame.sprite.Sprite):
+    image = load_image('play.png')
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = Start.image
+        self.rect = self.image.get_rect()
+        self.rect.center = (width / 2, height // 5 * 2)
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+class Option(pygame.sprite.Sprite):
+    image = load_image('options.png')
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = Option.image
+        self.rect = self.image.get_rect()
+        self.rect.center = (width / 2, height // 5 * 3)
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+class Close(pygame.sprite.Sprite):
+    image = load_image('cancel.png')
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = Close.image
+        self.rect = self.image.get_rect()
+        self.rect.center = (width / 2, height // 5 * 4)
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+
+class Backgraund(pygame.sprite.Sprite):
+    im = load_image("space-bck1.png")
+
+    def __init__(self):
+        super().__init__(back_sprites)
+        self.image = Backgraund.im
+        self.rect = self.image.get_rect()
+
+
+def click(obj, x, y):
+    pass
+
+
+pygame.init()
+
+smallfont = pygame.font.SysFont('Corbel', 35)
+running = True
+
+Backgraund()
+Menu()
+Start()
+Option()
+Close()
+
+while running:
+
+    for ev in pygame.event.get():
+        if ev.type == pygame.QUIT:
+            running = False
+
+    back_sprites.draw(screen)
+    back_sprites.update()
+    all_sprites.draw(screen)
+    all_sprites.update()
+    pygame.display.flip()
+pygame.quit()
