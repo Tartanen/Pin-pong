@@ -5,6 +5,7 @@ import pygame
 from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2
 from load_image import load_image
 from load_sound import load_sound
+from menu import start_tp
 
 fps = 60
 width = 640
@@ -140,73 +141,72 @@ class Backgraund(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 
-pygame.init()
+if start_tp:
+    pygame.init()
 
-m_left_s = False
-m_right_s = False
-m_left_a = False
-m_right_d = False
+    m_left_s = False
+    m_right_s = False
+    m_left_a = False
+    m_right_d = False
 
-Border(5, 5, width - 5, 5)
-Border(5, height - 5, width - 5, height - 5)
-Border(5, 5, 5, height - 5)
-Border(width - 5, 5, width - 5, height - 5)
+    Border(5, 5, width - 5, 5)
+    Border(5, height - 5, width - 5, height - 5)
+    Border(5, 5, 5, height - 5)
+    Border(width - 5, 5, width - 5, height - 5)
 
-pygame.mixer.music.load("data/sound/fon.mp3")
-hit = load_sound("hit.mp3")
-loss = load_sound("loss.mp3")
+    pygame.mixer.music.load("data/sound/fon.mp3")
+    hit = load_sound("hit.mp3")
+    loss = load_sound("loss.mp3")
 
-clock = pygame.time.Clock()
+    clock = pygame.time.Clock()
 
-pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.3)
 
-running = True
+    Backgraund()
+    player1 = Rocket1()
+    player2 = Rocket2()
 
-Backgraund()
-player1 = Rocket1()
-player2 = Rocket2()
+    move(player1, 'left_s', 1)
+    move(player2, 'left_s', 1)
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    m_left_s = True
+                if event.key == pygame.K_RIGHT:
+                    m_right_s = True
+                if event.key == pygame.K_a:
+                    m_left_a = True
+                if event.key == pygame.K_d:
+                    m_right_d = True
+                if event.key == pygame.K_g:
+                    Ball(width // 2, height // 2)
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    m_left_s = False
+                if event.key == pygame.K_RIGHT:
+                    m_right_s = False
+                if event.key == pygame.K_a:
+                    m_left_a = False
+                if event.key == pygame.K_d:
+                    m_right_d = False
+        if m_left_s:
+            move(player1, 'left_s', 1)
+        if m_right_s:
+            move(player1, 'right_s', 1)
+        if m_left_a:
+            move(player2, 'left_a', 1)
+        if m_right_d:
+            move(player2, 'right_d', 1)
 
-move(player1, 'left_s', 1)
-move(player2, 'left_s', 1)
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                m_left_s = True
-            if event.key == pygame.K_RIGHT:
-                m_right_s = True
-            if event.key == pygame.K_a:
-                m_left_a = True
-            if event.key == pygame.K_d:
-                m_right_d = True
-            if event.key == pygame.K_g:
-                Ball(width // 2, height // 2)
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                m_left_s = False
-            if event.key == pygame.K_RIGHT:
-                m_right_s = False
-            if event.key == pygame.K_a:
-                m_left_a = False
-            if event.key == pygame.K_d:
-                m_right_d = False
-    if m_left_s:
-        move(player1, 'left_s', 1)
-    if m_right_s:
-        move(player1, 'right_s', 1)
-    if m_left_a:
-        move(player2, 'left_a', 1)
-    if m_right_d:
-        move(player2, 'right_d', 1)
-
-    back_sprites.draw(screen)
-    back_sprites.update()
-    all_sprites.draw(screen)
-    all_sprites.update()
-    pygame.display.flip()
-    clock.tick(fps)
-pygame.quit()
+        back_sprites.draw(screen)
+        back_sprites.update()
+        all_sprites.draw(screen)
+        all_sprites.update()
+        pygame.display.flip()
+        clock.tick(fps)
+    pygame.quit()
