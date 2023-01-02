@@ -16,7 +16,6 @@ screen = pygame.display.set_mode((width, height))
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
-menu_sprites = pygame.sprite.Group()
 back_sprites = pygame.sprite.Group()
 
 clock = pygame.time.Clock()
@@ -85,18 +84,23 @@ class Rocket2(pygame.sprite.Sprite):
 
 
 class Ball(pygame.sprite.Sprite):
-    image = load_image("ball.png")
-
-    def __init__(self, pos_x, pos_y):
+    def __init__(self, radius, x, y):
         super().__init__(all_sprites)
-        self.image = Ball.image
-        self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
-        temp = [1, -1, 0]
-        self.vx = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp)
-        self.vy = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp[0:-1])
-        self.rect.x = pos_x
-        self.rect.y = pos_y
+        self.radius = radius
+        self.image = pygame.Surface((2 * radius, 2 * radius),
+                                    pygame.SRCALPHA, 32)
+        pygame.draw.circle(self.image, pygame.Color("red"),
+                           (radius, radius), radius)
+        self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
+        self.vx = random.randint(-5, 5)
+        self.vy = random.randrange(-5, 5)
+
+    def update(self):
+        self.rect = self.rect.move(self.vx, self.vy)
+        if pygame.sprite.spritecollideany(self, horizontal_borders):
+            self.vy = -self.vy
+        if pygame.sprite.spritecollideany(self, vertical_borders):
+            self.vx = -self.vx
 
     def update(self):
         self.rect = self.rect.move(self.vx, self.vy)
