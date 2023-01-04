@@ -8,7 +8,10 @@ height = 1024
 
 screen = pygame.display.set_mode((width, height))
 
+clock = pygame.time.Clock()
 pygame.display.set_caption('Пин-понг')
+
+pygame.display.set_icon(load_image('icon.png'))
 
 all_sprites = pygame.sprite.Group()
 
@@ -36,6 +39,7 @@ class Backgraund(pygame.sprite.Sprite):
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, image, pos):
+        super().__init__(all_sprites)
         self.image = image
         self.x, self.y = pos
         self.rect = self.image.get_rect(center=(self.x, self.y))
@@ -43,7 +47,7 @@ class Button(pygame.sprite.Sprite):
     def update(self):
         screen.blit(self.image, self.rect)
 
-    def checkForInput(self, pos):
+    def checkpress(self, pos):
         if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
             return True
         return False
@@ -51,9 +55,12 @@ class Button(pygame.sprite.Sprite):
 
 pygame.init()
 
-smallfont = pygame.font.SysFont('Corbel', 35)
 running = True
 start_tp = False
+
+pygame.mixer.music.load("data/sound/fon.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.3)
 
 Backgraund()
 Menu()
@@ -67,17 +74,14 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if start.checkForInput(event.pos):
+            if start.checkpress(event.pos):
                 start_tp = True
                 running = False
-            if option.checkForInput(event.pos):
-                print('ПОка я (Бодя) не напишу ИИ, оно работать не будет')
-            if close.checkForInput(event.pos):
+            if option.checkpress(event.pos):
+                print('Пoка я (Бодя) не напишу ИИ, оно работать не будет')
+            if close.checkpress(event.pos):
                 running = False
     all_sprites.draw(screen)
     all_sprites.update()
-    start.update()
-    option.update()
-    close.update()
     pygame.display.update()
 pygame.quit()
