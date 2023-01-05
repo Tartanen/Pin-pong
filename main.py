@@ -2,6 +2,7 @@ import pygame
 from menu import start_screen
 from load_image import load_image
 import game
+import wins
 
 
 fps = 60
