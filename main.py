@@ -18,6 +18,7 @@ horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 back_sprites = pygame.sprite.Group()
+ball_sprites = pygame.sprite.Group()
 
 clock = pygame.time.Clock()
 pygame.display.set_caption('Пин-понг')
@@ -107,15 +108,15 @@ class Ball(pygame.sprite.Sprite):
     image = load_image("ball.png")
 
     def __init__(self, pos_x, pos_y):
-            super().__init__(all_sprites)
-            self.image = Ball.image
-            self.rect = self.image.get_rect()
-            self.mask = pygame.mask.from_surface(self.image)
-            temp = [1, -1, 0]
-            self.vx = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp)
-            self.vy = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp[0:-1])
-            self.rect.x = pos_x
-            self.rect.y = pos_y
+        super().__init__(ball_sprites)
+        self.image = Ball.image
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        temp = [1, -1, 0]
+        self.vx = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp)
+        self.vy = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp[0:-1])
+        self.rect.x = pos_x
+        self.rect.y = pos_y
 
     def update(self):
         temp1 = 0
@@ -138,15 +139,17 @@ class Ball(pygame.sprite.Sprite):
             self.vx = -self.vx
         if pygame.sprite.spritecollideany(self, horizontal_borders):
             loss.play()
-            if self.vx > 0:
-                self.vx += 1000
+            if self.rect[1] > (height // 2):
                 temp1 += 1
-            else:
-                self.vx -= 1000
+            if self.rect[1] < (height // 2):
                 temp2 += 1
             player11.score_update(temp1)
             player22.score_update(temp2)
+            clear_by_ball()
 
+def clear_by_ball():
+    for sprite in ball_sprites:
+        sprite.kill()
 
 
 class Border(pygame.sprite.Sprite):
@@ -236,7 +239,7 @@ if start_tp:
                 if event.key == pygame.K_d:
                     m_right_d = True
                 if event.key == pygame.K_k:
-                    Ball(width // 2, height // 2)
+                    tr = Ball(width // 2, height // 2)
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     m_left_s = False
@@ -259,6 +262,8 @@ if start_tp:
         back_sprites.update()
         all_sprites.draw(screen)
         all_sprites.update()
+        ball_sprites.draw(screen)
+        ball_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
-    pygame.quit()
+    terminate()
