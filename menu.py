@@ -1,19 +1,22 @@
 import pygame
 
+from terminate import terminate
 from load_image import load_image
 
 fps = 60
 width = 640
 height = 1024
-
-screen = pygame.display.set_mode((width, height))
-
-clock = pygame.time.Clock()
-pygame.display.set_caption('Пин-понг')
-
-pygame.display.set_icon(load_image('icon.png'))
-
+is_running = False
 all_sprites = pygame.sprite.Group()
+
+
+class Backgraund(pygame.sprite.Sprite):
+    im = load_image("space-bck1.png")
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = Backgraund.im
+        self.rect = self.image.get_rect()
 
 
 class Menu(pygame.sprite.Sprite):
@@ -24,16 +27,6 @@ class Menu(pygame.sprite.Sprite):
         self.image = Menu.image
         self.rect = self.image.get_rect()
         self.rect.center = (width / 2, height // 5)
-        self.mask = pygame.mask.from_surface(self.image)
-
-
-class Backgraund(pygame.sprite.Sprite):
-    im = load_image("space-bck1.png")
-
-    def __init__(self):
-        super().__init__(all_sprites)
-        self.image = Backgraund.im
-        self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
 
 
@@ -53,35 +46,33 @@ class Button(pygame.sprite.Sprite):
         return False
 
 
+def start_screen():
+    running = True
+    Backgraund()
+    Menu()
+
+    start = Button(load_image('play.png'), (width / 2, height // 5 * 2))
+    option = Button(load_image('options.png'), (width / 2, height // 5 * 3))
+    close = Button(load_image('cancel.png'), (width / 2, height // 5 * 4))
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start.checkpress(event.pos):
+                    return 'game'
+                if option.checkpress(event.pos):
+                    print('Пoка я (Бодя) не напишу ИИ, оно работать не будет')
+                if close.checkpress(event.pos):
+                    running = False
+        all_sprites.draw(screen)
+        all_sprites.update()
+        pygame.display.update()
+        clock.tick(fps)
+    terminate()
+
+clock = pygame.time.Clock()
 pygame.init()
+screen = pygame.display.set_mode((width, height))
 
-running = True
-start_tp = False
 
-pygame.mixer.music.load("data/sound/fon.mp3")
-pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.3)
-
-Backgraund()
-Menu()
-
-start = Button(load_image('play.png'), (width / 2, height // 5 * 2))
-option = Button(load_image('options.png'), (width / 2, height // 5 * 3))
-close = Button(load_image('cancel.png'), (width / 2, height // 5 * 4))
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if start.checkpress(event.pos):
-                start_tp = True
-                running = False
-            if option.checkpress(event.pos):
-                print('Пoка я (Бодя) не напишу ИИ, оно работать не будет')
-            if close.checkpress(event.pos):
-                running = False
-    all_sprites.draw(screen)
-    all_sprites.update()
-    pygame.display.update()
-pygame.quit()
