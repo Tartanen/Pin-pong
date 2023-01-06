@@ -1,8 +1,8 @@
 import pygame
 from menu import start_screen
 from load_image import load_image
-import game
-import wins
+from game import game
+from wins import wins
 
 
 fps = 60
@@ -19,10 +19,9 @@ def main():
         if scene == 'menu':
             scene = start_screen()
         elif scene == 'cont':
-            print('re')
-            ##scene = cont()
+            scene = wins()
         elif scene == 'game':
-            scene = game.game()
+            scene = game()
 
 main()
 

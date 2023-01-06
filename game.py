@@ -50,7 +50,7 @@ def move(obj, rule, rep):
 
 
 class Rocket1(pygame.sprite.Sprite):
-    image = load_image('rocket11.png')
+    image = load_image('ракетка 1 (1).png')
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -67,7 +67,7 @@ class Rocket1(pygame.sprite.Sprite):
 
 
 class Rocket2(pygame.sprite.Sprite):
-    image = load_image('rocket22.png')
+    image = load_image('ракетка 2 (1).png')
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -87,21 +87,25 @@ class Score(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__(all_sprites)
         self.score = 0
-        self.x, self.y = pos
+        self.pos = pos
         self.image = numbers[self.score]
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.rect = self.image.get_rect(center=self.pos)
 
     def update(self):
+        screen.blit(self.image, self.rect)
+        self.image = numbers[self.score]
         if self.score != 11:
-            screen.blit(self.image, self.rect)
-            self.image = numbers[self.score]
+            pass
         else:
             global teleports
             teleports = True
 
+    def move(self, x, y):
+        self.pos = x, y
+        self.rect = self.image.get_rect().move(x, y)
+
     def score_update(self, tp):
         self.score += tp
-
 
 
 class Ball(pygame.sprite.Sprite):
@@ -262,7 +266,7 @@ numbers = {
 }
 hit = load_sound("hit.mp3")
 loss = load_sound("loss1.mp3")
-player11 = Score((30, 50))
-player22 = Score((30, height - 50))
+player11 = Score((30, height // 2 - 30))
+player22 = Score((30, height // 2 + 30))
 player1 = Rocket1()
 player2 = Rocket2()
