@@ -2,10 +2,8 @@ import pygame
 
 from load_image import load_image
 from terminate import terminate
+from data import width, height, fps
 
-fps = 10
-width = 640
-height = 1024
 is_running = False
 all_sprites = pygame.sprite.Group()
 
@@ -83,7 +81,7 @@ def start_screen():
         all_sprites.update()
         menu.update()
         pygame.display.update()
-        clock.tick(fps)
+        clock.tick(fps // 3)
     terminate()
 
 

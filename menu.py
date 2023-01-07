@@ -2,11 +2,8 @@ import pygame
 
 from terminate import terminate
 from load_image import load_image
+from data import width, height, fps
 
-fps = 10
-width = 640
-height = 1024
-is_running = False
 all_sprites = pygame.sprite.Group()
 
 
@@ -59,6 +56,7 @@ class Button(pygame.sprite.Sprite):
         elif pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom) \
                 and self.image == self.gu_image:
             self.image = self.us_image
+
 
 def menu():
     running = True

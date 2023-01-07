@@ -1,15 +1,11 @@
 import random
-
 import pygame
 
-from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2
+from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2, max_speed_player2, max_speed_player1
+from data import width, height, fps
 from terminate import terminate
 from load_image import load_image
 from load_sound import load_sound
-
-fps = 60
-width = 640
-height = 1024
 
 screen = pygame.display.set_mode((width, height))
 pygame.init()
@@ -26,26 +22,16 @@ teleports = False
 wins = False
 
 
-def move(obj, rule, rep):
+def move(obj, rule, koef):
     x, y = obj.pos
     if rule == 'right_d' and x + obj.image.get_rect().size[0] < width - 5:
-        for j in range(rep):
-            obj.move(x + speed_player2, y)
+        obj.move(round(x + speed_player2 * koef), y)
     if rule == 'left_a' and x > 5:
-        for j in range(rep):
-            obj.move(x - speed_player2, y)
+        obj.move(round(x - speed_player2 * koef), y)
     if rule == 'left_s' and x > 5:
-        for j in range(rep):
-            obj.move(x - speed_player1, y)
+        obj.move(round(x - speed_player1 * koef), y)
     if rule == 'right_s' and x + obj.image.get_rect().size[0] < width - 5:
-        for j in range(rep):
-            obj.move(x + speed_player1, y)
-    if rule == 'up' and y - obj.image.get_rect().size[1] < 30:
-        for j in range(rep):
-            obj.move(x, y - speed_player1)
-    if rule == 'down' and y + obj.image.get_rect().size[1] < width - 20:
-        for j in range(rep):
-            obj.move(x, y + speed_player1)
+        obj.move(round(x + speed_player1 * koef), y)
 
 
 class Rocket1(pygame.sprite.Sprite):
@@ -112,10 +98,7 @@ class Score(pygame.sprite.Sprite):
             win.play()
 
     def score_update(self, tp):
-        if self.score == 0:
-            self.score += 10
-        else:
-            self.score += tp
+        self.score += tp
 
     def clear_score(self):
         self.score += 1
@@ -219,10 +202,12 @@ class Button(pygame.sprite.Sprite):
 
 
 def game(ret):
+    delay = 3
     if ret:
         global teleports, wins
         teleports = False
         wins = False
+        clear_by_ball()
         player1.tp()
         player2.tp()
         player11.clear_score()
@@ -232,6 +217,10 @@ def game(ret):
     m_right_s = False
     m_left_a = False
     m_right_d = False
+    lshift = False
+    rshift = False
+    rrshift = 1
+    llshift = 1
 
     clock = pygame.time.Clock()
 
@@ -248,6 +237,7 @@ def game(ret):
     # pygame.mixer.music.set_volume(0.3)#
 
     running = True
+    delay_tp = fps * delay
 
     while running:
         for event in pygame.event.get():
@@ -256,15 +246,23 @@ def game(ret):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return 'pause', False
+                if event.key == pygame.K_RSHIFT:
+                    rshift = True
                 if event.key == pygame.K_LEFT:
                     m_left_s = True
                 if event.key == pygame.K_RIGHT:
                     m_right_s = True
+                if event.key == pygame.K_LSHIFT:
+                    lshift = True
                 if event.key == pygame.K_a:
                     m_left_a = True
                 if event.key == pygame.K_d:
                     m_right_d = True
             if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LSHIFT:
+                    lshift = False
+                if event.key == pygame.K_RSHIFT:
+                    rshift = False
                 if event.key == pygame.K_g:
                     Ball(width // 2, height // 2)
                 if event.key == pygame.K_LEFT:
@@ -278,16 +276,28 @@ def game(ret):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if pause.checkpress(event.pos):
                     return 'pause', False
+        if lshift:
+            llshift = max_speed_player1
+        if rshift:
+            rrshift = max_speed_player2
         if m_left_s:
-            move(player1, 'left_s', 1)
+            move(player1, 'left_s', rrshift)
         if m_right_s:
-            move(player1, 'right_s', 1)
+            move(player1, 'right_s', rrshift)
         if m_left_a:
-            move(player2, 'left_a', 1)
+            move(player2, 'left_a', llshift)
         if m_right_d:
-            move(player2, 'right_d', 1)
+            move(player2, 'right_d', llshift)
         if teleports:
             return 'win', wins
+        if len(ball_sprites) == 0:
+            if delay_tp != 0:
+                delay_tp -= 1
+            else:
+                delay_tp = fps * delay
+                Ball(width // 2, height // 2)
+        rrshift = 1
+        llshift = 1
         pause.checkguad(pygame.mouse.get_pos())
         back_sprites.draw(screen)
         back_sprites.update()

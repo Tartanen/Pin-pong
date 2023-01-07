@@ -2,10 +2,8 @@ import pygame
 
 from terminate import terminate
 from load_image import load_image
+from data import width, height, fps
 
-fps = 10
-width = 640
-height = 1024
 all_sprites = pygame.sprite.Group()
 
 
