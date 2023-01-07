@@ -1,39 +1,45 @@
 import pygame
 
-from terminate import terminate
 from load_image import load_image
+from terminate import terminate
 
 fps = 10
 width = 640
 height = 1024
+is_running = False
 all_sprites = pygame.sprite.Group()
+
+menu = {}
+for i in range(1, 72):
+    menu[i] = load_image(f'Anime\{i}.jpg')
+    pygame.transform.scale(menu[i], (width, height))
 
 
 class Backgraund(pygame.sprite.Sprite):
-    im = load_image("space-bck1.png")
-
     def __init__(self):
         super().__init__(all_sprites)
-        self.image = Backgraund.im
+        self.frame = 1
+        self.image = menu[self.frame]
         self.rect = self.image.get_rect()
 
+    def update(self):
+        self.frame = self.frame % 71
+        self.frame += 1
+        self.image = menu[self.frame]
+        screen.blit(self.image, self.rect)
 
-class Backstage(pygame.sprite.Sprite):
-    image = load_image('backstage.png')
+
+class Menu(pygame.sprite.Sprite):
+    image = load_image('welcome.png')
 
     def __init__(self):
         super().__init__(all_sprites)
-        self.image = Backstage.image
+        self.image = Menu.image
         self.x, self.y = width // 2, height // 4
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
-
-class Winners(pygame.sprite.Sprite):
-    def __init__(self, image):
-        super().__init__(all_sprites)
-        self.image = image
-        self.x, self.y = width // 2, height // 2
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+    def update(self):
+        screen.blit(self.image, self.rect)
 
 
 class Button(pygame.sprite.Sprite):
@@ -60,28 +66,22 @@ class Button(pygame.sprite.Sprite):
             self.image = self.us_image
 
 
-def wins(player):
-    Backgraund()
-    Backstage()
-    if player:
-        Winners(load_image('blue_pl.png'))
-    else:
-        Winners(load_image('red_pl.png'))
+def start_screen():
     running = True
-    back = Button((load_image('back_btn.png'), load_image('back_btn_pr.png')), (40, 40))
+    Backgraund()
+    start = Button((load_image('start_btn.png'), load_image('start_btn_pr.png')), (width / 2, height // 2))
+    Menu()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return 'start', False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if back.checkpress(event.pos):
-                    return 'start', False
-        back.checkguad(pygame.mouse.get_pos())
+                if start.checkpress(event.pos):
+                    return 'game', True
+        start.checkguad(pygame.mouse.get_pos())
         all_sprites.draw(screen)
         all_sprites.update()
+        menu.update()
         pygame.display.update()
         clock.tick(fps)
     terminate()

@@ -1,9 +1,9 @@
 import pygame
-from menu import start_screen
+from start_window import start_screen
 from load_image import load_image
 from game import game
 from wins import wins
-
+from menu import menu
 
 fps = 60
 width = 640
@@ -13,15 +13,16 @@ height = 1024
 def main():
     pygame.display.set_caption('Пин-понг')
     pygame.display.set_icon(load_image('icon.png'))
-    screen = pygame.display.set_mode((width, height))
-    scene = 'menu'
+    scene = ('start', False)
     while True:
-        if scene == 'menu':
+        if scene[0] == 'start':
             scene = start_screen()
-        elif scene == 'cont':
-            scene = wins()
-        elif scene == 'game':
-            scene = game()
+        elif scene[0] == 'win':
+            scene = wins(scene[-1])
+        elif scene[0] == 'pause':
+            scene = menu()
+        elif scene[0] == 'game':
+            scene = game(scene[-1])
+
 
 main()
-
