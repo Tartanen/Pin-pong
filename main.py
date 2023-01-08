@@ -8,7 +8,7 @@ from menu import menu
 
 def main():
     pygame.display.set_caption('Пин-понг')
-    pygame.display.set_icon(load_image('icon.png'))
+    pygame.display.set_icon(load_image('backstage', 'icon.png'))
     scene = ('start', False)
     while True:
         if scene[0] == 'start':

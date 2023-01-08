@@ -8,7 +8,7 @@ all_sprites = pygame.sprite.Group()
 
 
 class Backgraund(pygame.sprite.Sprite):
-    im = load_image("space-bck1.png")
+    im = load_image('backstage', "space-bck1.png")
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -17,7 +17,7 @@ class Backgraund(pygame.sprite.Sprite):
 
 
 class Backstage(pygame.sprite.Sprite):
-    image = load_image('backstage.png')
+    image = load_image('backstage', 'backstage.png')
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -47,12 +47,14 @@ class Button(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
     def checkpress(self, pos):
-        if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
+        if pos[0] in range(self.rect.left, self.rect.right) and \
+                pos[1] in range(self.rect.top, self.rect.bottom):
             return True
         return False
 
     def checkguad(self, pos):
-        if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
+        if pos[0] in range(self.rect.left, self.rect.right) and \
+                pos[1] in range(self.rect.top, self.rect.bottom):
             self.image = self.gu_image
         else:
             self.image = self.us_image
@@ -62,11 +64,12 @@ def wins(player):
     Backgraund()
     Backstage()
     if player:
-        Winners(load_image('blue_pl.png'))
+        Winners(load_image('backstage', 'blue_pl.png'))
     else:
-        Winners(load_image('red_pl.png'))
+        Winners(load_image('backstage', 'red_pl.png'))
     running = True
-    back = Button((load_image('back_btn.png'), load_image('back_btn_pr.png')), (40, 40))
+    back = Button((load_image('button', 'back_btn.png'),
+                   load_image('button', 'back_btn_pr.png')), (40, 40))
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

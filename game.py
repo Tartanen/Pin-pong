@@ -1,8 +1,8 @@
 import random
 import pygame
 
-from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2, max_speed_player2, max_speed_player1
-from data import width, height, fps
+from data import max_speed_ball, min_speed_ball, speed_player1, speed_player2
+from data import width, height, fps, max_speed_player1, max_speed_player2
 from terminate import terminate
 from load_image import load_image
 from load_sound import load_sound
@@ -34,35 +34,20 @@ def move(obj, rule, koef):
         obj.move(round(x + speed_player1 * koef), y)
 
 
-class Rocket1(pygame.sprite.Sprite):
-    image = load_image('ракетка 1 (1).png')
+class Rocket(pygame.sprite.Sprite):
+    """
+    Класс ракеток. Проще только класс фона и границ.
+    Из интересного:
+    1. Помнит центр и откуда ничинать движения для рестарта игры
+    2. Задаёт коллизию для ракетки чтобы мячик отстукивался в различном
+    направлении
+    """
 
-    def __init__(self):
+    def __init__(self, image, pos):
         super().__init__(all_sprites)
-        self.image = Rocket1.image
-        self.pos_x = width / 2 - self.image.get_rect().size[0] / 2
-        self.pos_y = height - self.image.get_rect().size[-1] - 30
-        self.pos = self.pos_x, self.pos_y
-        self.rect = self.image.get_rect(center=self.pos)
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def move(self, x, y):
-        self.pos = x, y
-        self.rect = self.image.get_rect().move(x, y)
-
-    def tp(self):
-        self.pos = self.pos_x, self.pos_y
-        self.rect = self.image.get_rect(center=self.pos)
-
-
-class Rocket2(pygame.sprite.Sprite):
-    image = load_image('ракетка 2 (1).png')
-
-    def __init__(self):
-        super().__init__(all_sprites)
-        self.image = Rocket2.image
-        self.pos_x = width / 2 - self.image.get_rect().size[0] / 2
-        self.pos_y = 15
+        self.image = image
+        self.pos_x = pos[0]
+        self.pos_y = pos[-1]
         self.pos = self.pos_x, self.pos_y
         self.rect = self.image.get_rect(center=self.pos)
         self.mask = pygame.mask.from_surface(self.image)
@@ -77,6 +62,15 @@ class Rocket2(pygame.sprite.Sprite):
 
 
 class Score(pygame.sprite.Sprite):
+    """
+        Класс счёта. Тут у нас ведётся подсчёт результатов игры!
+        Из интересного:
+        1. Каждый счёт загружается индивидуально (это доп. нагрузка на
+        пк, но есть возможность кастомизации)
+        2. Реализация цикла получилась через глобалки (грустненько), но
+        так оно работает, а не выпадает в ошибку
+        """
+
     def __init__(self, pos, nab, num):
         super().__init__(all_sprites)
         self.score = 0
@@ -107,7 +101,17 @@ class Score(pygame.sprite.Sprite):
 
 
 class Ball(pygame.sprite.Sprite):
-    image = load_image("ball.png")
+    """
+    Класс мяча. Можно сказать сердце всего кода т.к. вся физика полётов
+    и система побед проигрышей считается здесь!
+    Из интересного:
+    1. после столкновение с ракеткой движение по оси У и Х
+    пересчитывается заново для интереса игры
+    2. Тут есть система очистки поля от лишних шаров
+    (нажмите G пару раз и посмотрите)
+    ну и звуки ударов, вылетов за границы поля тоже
+    """
+    image = load_image('backstage', "ball.png")
 
     def __init__(self, pos_x, pos_y):
         super().__init__(ball_sprites)
@@ -115,8 +119,10 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         temp = [1, -1, 0]
-        self.vx = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp)
-        self.vy = random.randint(min_speed_ball, max_speed_ball) * random.choice(temp[0:-1])
+        self.vx = (random.randint(min_speed_ball, max_speed_ball)
+                   * random.choice(temp))
+        self.vy = (random.randint(min_speed_ball, max_speed_ball)
+                   * random.choice(temp[0:-1]))
         self.rect.x = pos_x
         self.rect.y = pos_y
 
@@ -150,12 +156,15 @@ class Ball(pygame.sprite.Sprite):
             clear_by_ball()
 
 
+# Удаление шариков (+ оптимизация и решение кучи багов)
 def clear_by_ball():
     for sprite in ball_sprites:
         sprite.kill()
 
 
 class Border(pygame.sprite.Sprite):
+    """Это класс выставления границ поля (собственно ничего нового)"""
+
     def __init__(self, x1, y1, x2, y2):
         super().__init__(all_sprites)
         if x1 == x2:
@@ -169,7 +178,8 @@ class Border(pygame.sprite.Sprite):
 
 
 class Backgraund(pygame.sprite.Sprite):
-    im = load_image("space-bck1.png")
+    """Это класс изображения поля (собственно ничего нового)"""
+    im = load_image('backstage', "space-bck1.png")
 
     def __init__(self):
         super().__init__(back_sprites)
@@ -178,6 +188,15 @@ class Backgraund(pygame.sprite.Sprite):
 
 
 class Button(pygame.sprite.Sprite):
+    """
+    класс батон
+    класс в котором создаются кнопки и присваивается вещи:
+    1. нажатия - мега вещь с помощью которой получется
+    переключаться между внутренними окнами
+    2. есть ли курсор в поле - отследить и указать что выбрана
+    кнопка не от взлома Пентагона
+    """
+
     def __init__(self, image, pos):
         super().__init__(all_sprites)
         self.us_image = image[0]
@@ -190,18 +209,22 @@ class Button(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
     def checkpress(self, pos):
-        if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
+        if pos[0] in range(self.rect.left, self.rect.right) and \
+                pos[1] in range(self.rect.top, self.rect.bottom):
             return True
         return False
 
     def checkguad(self, pos):
-        if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
+        if pos[0] in range(self.rect.left, self.rect.right) and \
+                pos[1] in range(self.rect.top, self.rect.bottom):
             self.image = self.gu_image
         else:
             self.image = self.us_image
 
 
+# Цикл игры
 def game(ret):
+    # delay - в секундах
     delay = 3
     if ret:
         global teleports, wins
@@ -230,11 +253,9 @@ def game(ret):
     Border(5, height - 5, width - 5, height - 5)
     Border(5, 5, 5, height - 5)
     Border(width - 5, 5, width - 5, height - 5)
-    pause = Button((load_image('pause_btn.png'), load_image('pause_btn_pr.png')), (width - 30, height // 2))
-
-    # pygame.mixer.music.load("data/sound/fon.mp3")#Фоновая музака
-    # pygame.mixer.music.play(-1)#
-    # pygame.mixer.music.set_volume(0.3)#
+    pause = Button((load_image('button', 'pause_btn.png'),
+                    load_image('button', 'pause_btn_pr.png')),
+                   (width - 30, height // 2))
 
     running = True
     delay_tp = fps * delay
@@ -312,15 +333,15 @@ def game(ret):
 
 numb_red = {}
 for i in range(0, 12):
-    numb_red[i] = load_image(f'number\{i}_син.png')
+    numb_red[i] = load_image('number', f'{i}_красн.png')
 numb_blue = {}
 for i in range(0, 12):
-    numb_blue[i] = load_image(f'number\{i}_красн.png')
+    numb_blue[i] = load_image('number', f'{i}_син.png')
 hit = load_sound("hit.mp3")
 loss = load_sound("loss1.mp3")
 win = load_sound('win.mp3')
 player11 = Score((30, height // 2 - 30), numb_red, 1)
 player22 = Score((30, height // 2 + 30), numb_blue, 0)
 
-player1 = Rocket1()
-player2 = Rocket2()
+player1 = Rocket(load_image('backstage', 'ракетка 1 (1).png'), (width // 2, height - 45))
+player2 = Rocket(load_image('backstage', 'ракетка 2 (1).png'), (width // 2, 15))

@@ -9,7 +9,7 @@ all_sprites = pygame.sprite.Group()
 
 menu = {}
 for i in range(1, 72):
-    menu[i] = load_image(f'Anime\{i}.jpg')
+    menu[i] = load_image('Anime', f'{i}.jpg')
     pygame.transform.scale(menu[i], (width, height))
 
 
@@ -28,7 +28,7 @@ class Backgraund(pygame.sprite.Sprite):
 
 
 class Menu(pygame.sprite.Sprite):
-    image = load_image('welcome.png')
+    image = load_image('backstage', 'welcome.png')
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -67,7 +67,9 @@ class Button(pygame.sprite.Sprite):
 def start_screen():
     running = True
     Backgraund()
-    start = Button((load_image('start_btn.png'), load_image('start_btn_pr.png')), (width / 2, height // 2))
+    start = Button((load_image('button', 'start_btn.png'),
+                    load_image('button', 'start_btn_pr.png')),
+                   (width / 2, height // 2))
     Menu()
     while running:
         for event in pygame.event.get():

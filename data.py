@@ -43,4 +43,3 @@ with open('option.cvt', encoding="utf8") as f:
             height = int(row[-1])
         if row[0] == 'fps':
             fps = int(row[-1])
-
