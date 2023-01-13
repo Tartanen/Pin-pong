@@ -1,6 +1,6 @@
 import pygame
 
-from terminate import terminate
+from Function import terminate
 from load_image import load_image
 from data import width, height, fps
 

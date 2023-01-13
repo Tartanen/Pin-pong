@@ -1,7 +1,7 @@
 import pygame
 
 from load_image import load_image
-from terminate import terminate
+from Function import terminate
 from data import width, height, fps
 
 is_running = False
