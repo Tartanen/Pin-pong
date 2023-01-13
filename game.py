@@ -345,5 +345,7 @@ win = load_sound('win.mp3')
 player11 = Score((30, height // 2 - 30), numb_red, 1)
 player22 = Score((30, height // 2 + 30), numb_blue, 0)
 
-player1 = Rocket(load_image('backstage', 'ракетка 1 (1).png'), (width // 2, height - 45))
-player2 = Rocket(load_image('backstage', 'ракетка 2 (1).png'), (width // 2, 15))
+player1 = Rocket(load_image('backstage', 'ракетка 1 (1).png'),
+                 (width // 2, height - 45))
+player2 = Rocket(load_image('backstage', 'ракетка 2 (1).png'),
+                 (width // 2, 15))

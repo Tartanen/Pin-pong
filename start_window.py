@@ -53,12 +53,14 @@ class Button(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
     def checkpress(self, pos):
-        if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
+        if pos[0] in range(self.rect.left, self.rect.right) and \
+                pos[1] in range(self.rect.top, self.rect.bottom):
             return True
         return False
 
     def checkguad(self, pos):
-        if pos[0] in range(self.rect.left, self.rect.right) and pos[1] in range(self.rect.top, self.rect.bottom):
+        if pos[0] in range(self.rect.left, self.rect.right) and \
+                pos[1] in range(self.rect.top, self.rect.bottom):
             self.image = self.gu_image
         else:
             self.image = self.us_image
