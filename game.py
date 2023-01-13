@@ -18,9 +18,6 @@ ball_sprites = pygame.sprite.Group()
 
 clock = pygame.time.Clock()
 
-teleports = False
-wins = False
-
 
 def move(obj, rule, koef):
     x, y = obj.pos
