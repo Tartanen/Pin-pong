@@ -1,6 +1,6 @@
 import pygame
-from start_window import start_screen
-from load_image import load_image
+from start import start_screen
+from Function import load_image
 from game import game
 from wins import wins
 from menu import menu
